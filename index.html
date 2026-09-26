@@ -463,13 +463,43 @@
   </footer>
 
   <script>
-    function generateVideo() {
-      const prompt = document.getElementById("prompt").value.trim();
+    async function generateVideo() {
+  const prompt = document.getElementById("prompt").value.trim();
+  const style = document.getElementById("style").value;
+  const duration = document.getElementById("duration").value;
+  const ratio = document.getElementById("ratio").value;
 
-      if (!prompt) {
-        alert("Please describe the video you want to create.");
-        return;
-      }
+  if (!prompt) {
+    alert("Please describe the video you want to create.");
+    return;
+  }
+
+  try {
+    const response = await fetch("https://vidzai-api.onrender.com/api/generate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        prompt: prompt,
+        style: style,
+        duration: duration,
+        aspectRatio: ratio
+      })
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      alert("Your video request was sent to VidzAI successfully! 🚀");
+    } else {
+      alert(data.error || "Something went wrong.");
+    }
+  } catch (error) {
+    alert("Could not connect to the VidzAI server.");
+    console.error(error);
+  }
+}
 
       const response = await fetch("https://vidzai-api.onrender.com/api/generate", {
   method: "POST",
