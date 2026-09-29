@@ -505,29 +505,3 @@ async function generateVideo() {
   }
 }
 </script>
-
-      const response = await fetch("https://vidzai-api.onrender.com/api/generate", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-    prompt: promptInput.value,
-    style: styleSelect.value,
-    duration: durationSelect.value,
-    aspectRatio: ratioSelect.value
-  })
-});
-
-const data = await response.json();
-
-if (data.success) {
-  alert("Your video request was sent to VidzAI successfully! 🚀");
-} else {
-  alert(data.error || "Something went wrong.");
-}
-    }
-  </script>
-
-</body>
-</html>
