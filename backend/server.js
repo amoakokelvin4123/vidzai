@@ -31,9 +31,11 @@ app.post("/api/generate", async (req, res) => {
       });
     }
 
-    const finalPrompt = style
-      ? `${prompt}. Style: ${style}`
+    const stylePrompt = style
+      ? `${prompt}. Visual style: ${style}.`
       : prompt;
+
+    const endSeconds = Number(duration) || 5;
 
     const response = await fetch(
       "https://api.magichour.ai/v1/text-to-video",
@@ -44,9 +46,16 @@ app.post("/api/generate", async (req, res) => {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          prompt: finalPrompt,
-          duration: Number(duration) || 5,
-          aspectRatio: aspectRatio || "16:9",
+          end_seconds: endSeconds,
+
+          aspect_ratio: aspectRatio || "16:9",
+
+          style: {
+            prompt: stylePrompt
+          },
+
+          model: "ltx-2.5",
+
           resolution: "480p"
         })
       }
@@ -54,18 +63,20 @@ app.post("/api/generate", async (req, res) => {
 
     const data = await response.json();
 
+    console.log("Magic Hour response:", data);
+
     if (!response.ok) {
       console.error("Magic Hour error:", data);
 
       return res.status(response.status).json({
-        error: "Magic Hour video generation failed.",
+        error: data.message || "Magic Hour video generation failed.",
         details: data
       });
     }
 
     res.json({
       success: true,
-      message: "Video generation started.",
+      message: "Video generation started!",
       project: data
     });
 
