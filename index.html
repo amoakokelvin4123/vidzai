@@ -1,18 +1,22 @@
 <script>
 async function generateVideo() {
-  const promptInput = document.getElementById("prompt");
-  const styleInput = document.getElementById("style");
-  const durationInput = document.getElementById("duration");
-  const ratioInput = document.getElementById("ratio");
-
-  const prompt = promptInput ? promptInput.value.trim() : "";
-  const style = styleInput ? styleInput.value : "";
-  const duration = durationInput ? durationInput.value : "5";
-  const aspectRatio = ratioInput ? ratioInput.value : "16:9";
+  const prompt = document.getElementById("prompt").value.trim();
+  const style = document.getElementById("style").value;
+  const durationText = document.getElementById("duration").value;
+  const ratioText = document.getElementById("ratio").value;
 
   if (!prompt) {
-    alert("Please enter a video prompt first.");
+    alert("Please describe the video you want to create.");
     return;
+  }
+
+  const duration = parseInt(durationText) || 5;
+
+  let aspectRatio = "16:9";
+  if (ratioText.includes("9:16")) {
+    aspectRatio = "9:16";
+  } else if (ratioText.includes("1:1")) {
+    aspectRatio = "1:1";
   }
 
   try {
@@ -40,8 +44,8 @@ async function generateVideo() {
 
     if (!response.ok) {
       alert(
-        "❌ Video generation failed:\n" +
-        (data.error || "Unknown server error")
+        "❌ Generation failed:\n" +
+        (data.error || "Unknown error")
       );
       return;
     }
@@ -53,11 +57,7 @@ async function generateVideo() {
 
   } catch (error) {
     console.error("VidzAI error:", error);
-
-    alert(
-      "❌ Could not connect to the VidzAI server.\n\n" +
-      "Please try again."
-    );
+    alert("❌ Could not connect to the VidzAI server.");
   }
 }
 </script>
