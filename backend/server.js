@@ -13,6 +13,7 @@ app.get("/", (req, res) => {
   });
 });
 
+// Start video generation
 app.post("/api/generate", async (req, res) => {
   try {
     const { prompt, style, duration, aspectRatio } = req.body;
@@ -47,15 +48,11 @@ app.post("/api/generate", async (req, res) => {
         },
         body: JSON.stringify({
           end_seconds: endSeconds,
-
           aspect_ratio: aspectRatio || "16:9",
-
           style: {
             prompt: stylePrompt
           },
-
           model: "ltx-2.5",
-
           resolution: "480p"
         })
       }
@@ -66,8 +63,6 @@ app.post("/api/generate", async (req, res) => {
     console.log("Magic Hour response:", data);
 
     if (!response.ok) {
-      console.error("Magic Hour error:", data);
-
       return res.status(response.status).json({
         error: data.message || "Magic Hour video generation failed.",
         details: data
@@ -85,6 +80,50 @@ app.post("/api/generate", async (req, res) => {
 
     res.status(500).json({
       error: "Something went wrong while starting the video."
+    });
+  }
+});
+
+// Check video status
+app.get("/api/video/:id", async (req, res) => {
+  try {
+    const apiKey = process.env.MAGIC_HOUR_API_KEY;
+
+    if (!apiKey) {
+      return res.status(500).json({
+        error: "Magic Hour API key is not configured."
+      });
+    }
+
+    const response = await fetch(
+      `https://api.magichour.ai/v1/video-projects/${req.params.id}`,
+      {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${apiKey}`,
+          "Content-Type": "application/json"
+        }
+      }
+    );
+
+    const data = await response.json();
+
+    console.log("Video status:", data);
+
+    if (!response.ok) {
+      return res.status(response.status).json({
+        error: data.message || "Could not check video status.",
+        details: data
+      });
+    }
+
+    res.json(data);
+
+  } catch (error) {
+    console.error("Status error:", error);
+
+    res.status(500).json({
+      error: "Something went wrong while checking the video."
     });
   }
 });
