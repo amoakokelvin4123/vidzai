@@ -851,43 +851,7 @@
     if (!response.ok || !data.success) {
       alert(data.error || "Payment could not be started.");
       return;
-    }
-
-    window.location.href = data.authorization_url;
-
-  } catch (error) {
-    console.error(error);
-    alert("Could not connect to the payment system.");
-  }
-    }
-
-      if (plan === "free") {
-
-        alert(
-          "Your free VidzAI plan will be activated after account setup."
-        );
-
-        return;
-      }
-
-
-      if (plan === "pro") {
-
-        alert(
-          "Pro checkout will be connected to Paystack next."
-        );
-
-        return;
-      }
-
-
-      if (plan === "creator") {
-
-        alert(
-          "Creator checkout will be connected to Paystack next."
-        );
-
-        return;
+  
       }
 
     }
