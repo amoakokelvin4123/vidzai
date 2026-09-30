@@ -6,6 +6,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+const PORT = process.env.PORT || 10000;
+const PAYSTACK_SECRET_KEY = process.env.PAYSTACK_SECRET_KEY;
+
 app.get("/", (req, res) => {
   res.json({
     status: "online",
@@ -13,122 +16,107 @@ app.get("/", (req, res) => {
   });
 });
 
-// Start video generation
+// Video generation request
 app.post("/api/generate", async (req, res) => {
+  const { prompt, style, duration, aspectRatio } = req.body;
+
+  if (!prompt) {
+    return res.status(400).json({
+      error: "Please provide a video prompt."
+    });
+  }
+
+  res.json({
+    success: true,
+    message: "Video request received.",
+    request: {
+      prompt,
+      style,
+      duration,
+      aspectRatio
+    }
+  });
+});
+
+// Paystack payment initialization
+app.post("/api/payment/initialize", async (req, res) => {
   try {
-    const { prompt, style, duration, aspectRatio } = req.body;
+    const { email, plan } = req.body;
 
-    if (!prompt) {
+    if (!email) {
       return res.status(400).json({
-        error: "Please provide a video prompt."
+        error: "Email is required."
       });
     }
 
-    const apiKey = process.env.MAGIC_HOUR_API_KEY;
+    const plans = {
+      pro: {
+        name: "VidzAI Pro",
+        amount: 19000
+      },
+      creator: {
+        name: "VidzAI Creator",
+        amount: 49000
+      }
+    };
 
-    if (!apiKey) {
+    const selectedPlan = plans[plan];
+
+    if (!selectedPlan) {
+      return res.status(400).json({
+        error: "Invalid plan."
+      });
+    }
+
+    if (!PAYSTACK_SECRET_KEY) {
       return res.status(500).json({
-        error: "Magic Hour API key is not configured."
+        error: "Paystack is not configured."
       });
     }
-
-    const stylePrompt = style
-      ? `${prompt}. Visual style: ${style}.`
-      : prompt;
-
-    const endSeconds = Number(duration) || 5;
 
     const response = await fetch(
-      "https://api.magichour.ai/v1/text-to-video",
+      "https://api.paystack.co/transaction/initialize",
       {
         method: "POST",
         headers: {
-          "Authorization": `Bearer ${apiKey}`,
+          Authorization: `Bearer ${PAYSTACK_SECRET_KEY}`,
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          end_seconds: endSeconds,
-          aspect_ratio: aspectRatio || "16:9",
-          style: {
-            prompt: stylePrompt
+          email,
+          amount: selectedPlan.amount,
+          currency: "GHS",
+          metadata: {
+            plan: plan,
+            product: selectedPlan.name
           },
-          model: "ltx-2.5",
-          resolution: "480p"
+          callback_url: "https://vidzai.onrender.com/"
         })
       }
     );
 
     const data = await response.json();
 
-    console.log("Magic Hour response:", data);
-
-    if (!response.ok) {
-      return res.status(response.status).json({
-        error: data.message || "Magic Hour video generation failed.",
-        details: data
+    if (!response.ok || !data.status) {
+      return res.status(400).json({
+        error: data.message || "Payment initialization failed."
       });
     }
 
     res.json({
       success: true,
-      message: "Video generation started!",
-      project: data
+      authorization_url: data.data.authorization_url,
+      reference: data.data.reference
     });
 
   } catch (error) {
-    console.error("Server error:", error);
+    console.error("Payment error:", error);
 
     res.status(500).json({
-      error: "Something went wrong while starting the video."
+      error: "Unable to initialize payment."
     });
   }
 });
-
-// Check video status
-app.get("/api/video/:id", async (req, res) => {
-  try {
-    const apiKey = process.env.MAGIC_HOUR_API_KEY;
-
-    if (!apiKey) {
-      return res.status(500).json({
-        error: "Magic Hour API key is not configured."
-      });
-    }
-
-    const response = await fetch(
-      `https://api.magichour.ai/v1/video-projects/${req.params.id}`,
-      {
-        method: "GET",
-        headers: {
-          "Authorization": `Bearer ${apiKey}`,
-          "Content-Type": "application/json"
-        }
-      }
-    );
-
-    const data = await response.json();
-
-    console.log("Video status:", data);
-
-    if (!response.ok) {
-      return res.status(response.status).json({
-        error: data.message || "Could not check video status.",
-        details: data
-      });
-    }
-
-    res.json(data);
-
-  } catch (error) {
-    console.error("Status error:", error);
-
-    res.status(500).json({
-      error: "Something went wrong while checking the video."
-    });
-  }
-});
-
-const PORT = process.env.PORT || 10000;
 
 app.listen(PORT, () => {
   console.log(`VidzAI backend running on port ${PORT}`);
