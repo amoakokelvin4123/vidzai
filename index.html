@@ -1,14 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <title>VidzAI — AI Video Generator</title>
-  <meta
-    name="description"
-    content="Create stunning AI videos from simple text prompts with VidzAI."
-  />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VidzAI - AI Video Generator</title>
 
   <style>
     * {
@@ -17,373 +12,171 @@
       padding: 0;
     }
 
-    html {
-      scroll-behavior: smooth;
-    }
-
     body {
-      font-family: Arial, Helvetica, sans-serif;
-      background:
-        radial-gradient(circle at 20% 10%, #172554 0, transparent 35%),
-        radial-gradient(circle at 80% 20%, #3b0764 0, transparent 30%),
-        #050816;
-      color: #fff;
-      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      background: #080b12;
+      color: white;
+      line-height: 1.6;
     }
 
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    button,
-    select,
-    textarea {
-      font: inherit;
-    }
-
-    .container {
-      width: min(1120px, 92%);
-      margin: auto;
-    }
-
-    /* NAVBAR */
-
-    nav {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      backdrop-filter: blur(18px);
-      background: rgba(5, 8, 22, 0.82);
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-    }
-
-    .nav-inner {
-      height: 70px;
+    header {
+      padding: 20px;
       display: flex;
-      align-items: center;
       justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #202633;
     }
 
     .logo {
       font-size: 25px;
-      font-weight: 800;
-      letter-spacing: -1px;
+      font-weight: bold;
     }
 
     .logo span {
-      color: #8b5cf6;
+      color: #7c5cff;
     }
 
-    .nav-links {
-      display: flex;
-      gap: 26px;
-      align-items: center;
-      font-size: 14px;
-      color: #cbd5e1;
+    nav a {
+      color: #aaa;
+      text-decoration: none;
+      margin-left: 15px;
     }
-
-    .nav-links a:hover {
-      color: white;
-    }
-
-    .nav-button {
-      padding: 10px 16px;
-      border-radius: 10px;
-      background: #7c3aed;
-      color: white;
-      font-weight: 700;
-    }
-
-    /* HERO */
 
     .hero {
       text-align: center;
-      padding: 95px 0 55px;
-    }
-
-    .badge {
-      display: inline-block;
-      padding: 8px 13px;
-      border: 1px solid rgba(139,92,246,.45);
-      border-radius: 999px;
-      background: rgba(124,58,237,.12);
-      color: #c4b5fd;
-      font-size: 13px;
-      margin-bottom: 22px;
+      padding: 70px 20px 40px;
     }
 
     .hero h1 {
-      font-size: clamp(42px, 8vw, 76px);
-      line-height: 0.98;
-      letter-spacing: -4px;
-      max-width: 850px;
-      margin: auto;
-    }
-
-    .gradient-text {
-      background: linear-gradient(90deg, #a78bfa, #ec4899, #22d3ee);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-
-    .hero p {
-      max-width: 650px;
-      margin: 24px auto 0;
-      color: #94a3b8;
-      font-size: 18px;
-      line-height: 1.6;
-    }
-
-    /* GENERATOR */
-
-    .generator-card {
-      max-width: 900px;
-      margin: 35px auto 90px;
-      padding: 25px;
-      border-radius: 22px;
-      background: rgba(15, 23, 42, 0.85);
-      border: 1px solid rgba(255,255,255,0.1);
-      box-shadow: 0 25px 80px rgba(0,0,0,.35);
-    }
-
-    textarea {
-      width: 100%;
-      min-height: 150px;
-      resize: vertical;
-      border: 1px solid #334155;
-      border-radius: 15px;
-      background: #080d1d;
-      color: white;
-      padding: 18px;
-      outline: none;
-      line-height: 1.6;
-    }
-
-    textarea:focus {
-      border-color: #8b5cf6;
-      box-shadow: 0 0 0 3px rgba(139,92,246,.12);
-    }
-
-    textarea::placeholder {
-      color: #64748b;
-    }
-
-    .options {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      margin-top: 15px;
-    }
-
-    .field label {
-      display: block;
-      color: #94a3b8;
-      font-size: 12px;
-      margin-bottom: 7px;
-    }
-
-    select {
-      width: 100%;
-      padding: 13px;
-      border-radius: 10px;
-      border: 1px solid #334155;
-      background: #080d1d;
-      color: white;
-      outline: none;
-    }
-
-    .generate-button {
-      width: 100%;
-      margin-top: 18px;
-      padding: 16px;
-      border: 0;
-      border-radius: 12px;
-      background: linear-gradient(90deg, #7c3aed, #ec4899);
-      color: white;
-      font-weight: 800;
-      cursor: pointer;
-      transition: transform .2s, opacity .2s;
-    }
-
-    .generate-button:hover {
-      transform: translateY(-2px);
-    }
-
-    .generate-button:disabled {
-      opacity: .6;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    #status {
-      white-space: pre-line;
-      margin-top: 15px;
-      text-align: center;
-      color: #cbd5e1;
-      font-size: 14px;
-    }
-
-    /* SECTIONS */
-
-    section {
-      padding: 80px 0;
-    }
-
-    .section-title {
-      text-align: center;
-      font-size: 38px;
+      font-size: 45px;
       margin-bottom: 15px;
     }
 
-    .section-subtitle {
-      text-align: center;
-      color: #94a3b8;
-      margin-bottom: 45px;
+    .hero h1 span {
+      color: #7c5cff;
     }
 
-    /* FEATURES */
-
-    .features {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 18px;
+    .hero p {
+      color: #aaa;
+      max-width: 650px;
+      margin: auto;
+      font-size: 18px;
     }
 
-    .feature {
+    .generator {
+      max-width: 850px;
+      margin: 30px auto 80px;
       padding: 25px;
-      background: rgba(15,23,42,.7);
-      border: 1px solid rgba(255,255,255,.08);
+      background: #111620;
+      border: 1px solid #252c3a;
       border-radius: 18px;
     }
 
-    .feature-icon {
-      font-size: 30px;
-      margin-bottom: 16px;
+    label {
+      display: block;
+      margin: 15px 0 8px;
+      font-weight: bold;
     }
 
-    .feature h3 {
-      margin-bottom: 9px;
+    textarea,
+    select,
+    input {
+      width: 100%;
+      padding: 14px;
+      border-radius: 10px;
+      border: 1px solid #303847;
+      background: #080b12;
+      color: white;
+      font-size: 15px;
     }
 
-    .feature p {
-      color: #94a3b8;
-      line-height: 1.6;
-      font-size: 14px;
+    textarea {
+      min-height: 130px;
+      resize: vertical;
     }
 
-    /* PRICING */
+    .generate-btn,
+    .plan-btn {
+      width: 100%;
+      border: none;
+      padding: 15px;
+      margin-top: 20px;
+      border-radius: 10px;
+      background: #7c5cff;
+      color: white;
+      font-size: 17px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .generate-btn:hover,
+    .plan-btn:hover {
+      opacity: 0.9;
+    }
+
+    #status {
+      margin-top: 18px;
+      padding: 12px;
+      border-radius: 8px;
+      display: none;
+      background: #171d29;
+    }
 
     .pricing {
+      padding: 60px 20px;
+      background: #0c1018;
+    }
+
+    .pricing h2 {
+      text-align: center;
+      font-size: 32px;
+      margin-bottom: 35px;
+    }
+
+    .plans {
+      max-width: 1000px;
+      margin: auto;
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 20px;
     }
 
-    .price-card {
-      padding: 28px;
-      border-radius: 20px;
-      background: rgba(15,23,42,.8);
-      border: 1px solid rgba(255,255,255,.1);
+    .plan {
+      background: #111620;
+      border: 1px solid #252c3a;
+      border-radius: 16px;
+      padding: 25px;
     }
 
-    .price-card.featured {
-      border-color: #8b5cf6;
-      box-shadow: 0 0 45px rgba(124,58,237,.15);
-    }
-
-    .popular {
-      display: inline-block;
-      padding: 5px 9px;
-      border-radius: 999px;
-      background: #7c3aed;
-      font-size: 11px;
-      font-weight: bold;
-      margin-bottom: 12px;
+    .plan h3 {
+      font-size: 23px;
     }
 
     .price {
-      font-size: 40px;
-      font-weight: 800;
-      margin: 12px 0;
+      font-size: 32px;
+      font-weight: bold;
+      margin: 15px 0;
     }
 
-    .price small {
-      font-size: 13px;
-      color: #64748b;
+    .plan p {
+      color: #aaa;
     }
 
-    .credits {
-      color: #c4b5fd;
-      margin-bottom: 20px;
-      font-size: 14px;
+    .plan ul {
+      margin: 20px 0;
+      padding-left: 20px;
+      color: #ccc;
     }
-
-    .features-list {
-      list-style: none;
-      color: #cbd5e1;
-      line-height: 2;
-      font-size: 14px;
-      min-height: 130px;
-    }
-
-    .plan-button {
-      width: 100%;
-      padding: 13px;
-      border-radius: 10px;
-      border: 1px solid #475569;
-      background: transparent;
-      color: white;
-      cursor: pointer;
-      font-weight: 700;
-    }
-
-    .featured .plan-button {
-      background: #7c3aed;
-      border-color: #7c3aed;
-    }
-
-    /* FOOTER */
 
     footer {
-      padding: 35px 0;
-      border-top: 1px solid rgba(255,255,255,.08);
-      color: #64748b;
       text-align: center;
-      font-size: 13px;
+      padding: 30px;
+      color: #777;
     }
 
-    /* MOBILE */
-
-    @media (max-width: 750px) {
-      .nav-links {
-        display: none;
-      }
-
-      .hero {
-        padding-top: 65px;
-      }
-
+    @media (max-width: 600px) {
       .hero h1 {
-        letter-spacing: -2px;
-      }
-
-      .options {
-        grid-template-columns: 1fr;
-      }
-
-      .features,
-      .pricing {
-        grid-template-columns: 1fr;
-      }
-
-      .generator-card {
-        padding: 16px;
-      }
-
-      section {
-        padding: 60px 0;
+        font-size: 35px;
       }
     }
   </style>
@@ -391,325 +184,146 @@
 
 <body>
 
-  <!-- NAVIGATION -->
+  <header>
+    <div class="logo">Vidz<span>AI</span></div>
 
-  <nav>
-    <div class="container nav-inner">
+    <nav>
+      <a href="#generator">Generate</a>
+      <a href="#pricing">Pricing</a>
+    </nav>
+  </header>
 
-      <a href="#" class="logo">
-        Vidz<span>AI</span>
-      </a>
+  <section class="hero">
+    <h1>Create <span>AI Videos</span> in Seconds</h1>
+    <p>
+      Turn your ideas into amazing videos with VidzAI.
+      Describe what you want and let AI do the work.
+    </p>
+  </section>
 
-      <div class="nav-links">
-        <a href="#generator">Generator</a>
-        <a href="#features">Features</a>
-        <a href="#pricing">Pricing</a>
-        <a href="#pricing" class="nav-button">Get Started</a>
+  <section class="generator" id="generator">
+
+    <h2>AI Video Generator</h2>
+
+    <label for="prompt">Describe your video</label>
+
+    <textarea
+      id="prompt"
+      placeholder="Example: A woman dancing in a colorful African market..."
+    ></textarea>
+
+    <label for="style">Video Style</label>
+
+    <select id="style">
+      <option value="cinematic">Cinematic</option>
+      <option value="realistic">Realistic</option>
+      <option value="anime">Anime</option>
+      <option value="3d">3D Animation</option>
+      <option value="cartoon">Cartoon</option>
+    </select>
+
+    <label for="duration">Duration</label>
+
+    <select id="duration">
+      <option value="5">5 seconds</option>
+      <option value="10">10 seconds</option>
+      <option value="15">15 seconds</option>
+    </select>
+
+    <label for="ratio">Aspect Ratio</label>
+
+    <select id="ratio">
+      <option value="16:9">16:9 Landscape</option>
+      <option value="9:16">9:16 Portrait</option>
+      <option value="1:1">1:1 Square</option>
+    </select>
+
+    <button class="generate-btn" id="generateButton">
+      Generate Video
+    </button>
+
+    <div id="status"></div>
+
+  </section>
+
+  <section class="pricing" id="pricing">
+
+    <h2>Choose Your Plan</h2>
+
+    <div class="plans">
+
+      <div class="plan">
+        <h3>Free</h3>
+        <div class="price">$0</div>
+        <p>Try VidzAI for free.</p>
+
+        <ul>
+          <li>3 credits</li>
+          <li>AI video generation</li>
+          <li>Basic styles</li>
+        </ul>
+
+        <button class="plan-btn" type="button" data-plan="free">
+          Get Started
+        </button>
+      </div>
+
+      <div class="plan">
+        <h3>Pro</h3>
+        <div class="price">$19/month</div>
+        <p>For regular creators.</p>
+
+        <ul>
+          <li>100 credits</li>
+          <li>More video generations</li>
+          <li>Premium styles</li>
+        </ul>
+
+        <button class="plan-btn" type="button" data-plan="pro">
+          Get Pro
+        </button>
+      </div>
+
+      <div class="plan">
+        <h3>Creator</h3>
+        <div class="price">$49/month</div>
+        <p>For serious creators.</p>
+
+        <ul>
+          <li>300 credits</li>
+          <li>More generations</li>
+          <li>Premium features</li>
+        </ul>
+
+        <button class="plan-btn" type="button" data-plan="creator">
+          Get Creator
+        </button>
       </div>
 
     </div>
-  </nav>
-
-
-  <!-- HERO -->
-
-  <main>
-
-    <section class="hero">
-
-      <div class="container">
-
-        <div class="badge">
-          ✨ AI Video Creation
-        </div>
-
-        <h1>
-          Turn your ideas into
-          <span class="gradient-text">amazing videos.</span>
-        </h1>
-
-        <p>
-          Create cinematic AI videos from simple text prompts.
-          Choose your style, duration and format, then let VidzAI
-          bring your idea to life.
-        </p>
-
-      </div>
-
-    </section>
-
-
-    <!-- GENERATOR -->
-
-    <section id="generator">
-
-      <div class="container">
-
-        <div class="generator-card">
-
-          <textarea
-            id="prompt"
-            placeholder="Describe the video you want to create...&#10;&#10;Example: A woman dancing in a colorful African market at sunset, cinematic camera movement, realistic style."
-          ></textarea>
-
-          <div class="options">
-
-            <div class="field">
-              <label for="style">Style</label>
-
-              <select id="style">
-                <option value="Cinematic">Cinematic</option>
-                <option value="Realistic">Realistic</option>
-                <option value="Anime">Anime</option>
-                <option value="3D Animation">3D Animation</option>
-                <option value="Cartoon">Cartoon</option>
-              </select>
-            </div>
-
-            <div class="field">
-              <label for="duration">Duration</label>
-
-              <select id="duration">
-                <option value="5">5 seconds</option>
-                <option value="10">10 seconds</option>
-                <option value="15">15 seconds</option>
-              </select>
-            </div>
-
-            <div class="field">
-              <label for="ratio">Aspect Ratio</label>
-
-              <select id="ratio">
-                <option value="16:9">16:9 Landscape</option>
-                <option value="9:16">9:16 Portrait</option>
-                <option value="1:1">1:1 Square</option>
-              </select>
-            </div>
-
-          </div>
-
-          <button
-            id="generateButton"
-            class="generate-button"
-            onclick="generateVideo()"
-          >
-            🎬 Generate Video
-          </button>
-
-          <div id="status"></div>
-
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- FEATURES -->
-
-    <section id="features">
-
-      <div class="container">
-
-        <h2 class="section-title">
-          Everything you need
-        </h2>
-
-        <p class="section-subtitle">
-          Create, customize and manage your AI videos in one place.
-        </p>
-
-        <div class="features">
-
-          <div class="feature">
-            <div class="feature-icon">✍️</div>
-            <h3>Text to Video</h3>
-            <p>
-              Describe your idea and turn your words into an AI-generated video.
-            </p>
-          </div>
-
-          <div class="feature">
-            <div class="feature-icon">🎨</div>
-            <h3>Creative Styles</h3>
-            <p>
-              Choose cinematic, realistic, anime, 3D animation and more.
-            </p>
-          </div>
-
-          <div class="feature">
-            <div class="feature-icon">⚡</div>
-            <h3>Fast Generation</h3>
-            <p>
-              Submit your idea and track your video generation from your dashboard.
-            </p>
-          </div>
-
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- PRICING -->
-
-    <section id="pricing">
-
-      <div class="container">
-
-        <h2 class="section-title">
-          Simple pricing
-        </h2>
-
-        <p class="section-subtitle">
-          Start free, then upgrade when you need more generations.
-        </p>
-
-        <div class="pricing">
-
-          <!-- FREE -->
-
-          <div class="price-card">
-
-            <h3>Free</h3>
-
-            <div class="price">
-              $0
-              <small>/month</small>
-            </div>
-
-            <div class="credits">
-              3 video credits
-            </div>
-
-            <ul class="features-list">
-              <li>✓ AI video generation</li>
-              <li>✓ 5-second videos</li>
-              <li>✓ Basic styles</li>
-              <li>✓ Standard quality</li>
-            </ul>
-
-            <button
-              class="plan-button"
-              onclick="selectPlan('free')"
-            >
-              Start Free
-            </button>
-
-          </div>
-
-
-          <!-- PRO -->
-
-          <div class="price-card featured">
-
-            <span class="popular">
-              MOST POPULAR
-            </span>
-
-            <h3>Pro</h3>
-
-            <div class="price">
-              $19
-              <small>/month</small>
-            </div>
-
-            <div class="credits">
-              100 video credits
-            </div>
-
-            <ul class="features-list">
-              <li>✓ 100 monthly credits</li>
-              <li>✓ Longer videos</li>
-              <li>✓ Premium styles</li>
-              <li>✓ HD generation</li>
-              <li>✓ Priority processing</li>
-            </ul>
-
-            <button
-              class="plan-button"
-              onclick="selectPlan('pro')"
-            >
-              Choose Pro
-            </button>
-
-          </div>
-
-
-          <!-- CREATOR -->
-
-          <div class="price-card">
-
-            <h3>Creator</h3>
-
-            <div class="price">
-              $49
-              <small>/month</small>
-            </div>
-
-            <div class="credits">
-              300 video credits
-            </div>
-
-            <ul class="features-list">
-              <li>✓ 300 monthly credits</li>
-              <li>✓ Long-form videos</li>
-              <li>✓ Premium styles</li>
-              <li>✓ HD generation</li>
-              <li>✓ Priority processing</li>
-            </ul>
-
-            <button
-              class="plan-button"
-              onclick="selectPlan('creator')"
-            >
-              Choose Creator
-            </button>
-
-          </div>
-
-        </div>
-
-      </div>
-
-    </section>
-
-  </main>
-
-
-  <!-- FOOTER -->
+  </section>
 
   <footer>
-
-    <div class="container">
-      © 2026 VidzAI. All rights reserved.
-    </div>
-
+    © 2026 VidzAI. All rights reserved.
   </footer>
 
-
-  <!-- JAVASCRIPT -->
-
   <script>
-
-    /*
-      VIDZAI BACKEND
-      This is the public API endpoint.
-      No secret API keys are stored here.
-    */
 
     const API_URL =
       "https://vidzai-api.onrender.com/api/generate";
 
+    const PAYMENT_URL =
+      "https://vidzai-api.onrender.com/api/payment/initialize";
+
+
+    // VIDEO GENERATION
+
+    document
+      .getElementById("generateButton")
+      .addEventListener("click", generateVideo);
+
 
     async function generateVideo() {
-
-      const button =
-        document.getElementById("generateButton");
-
-      const status =
-        document.getElementById("status");
 
       const prompt =
         document.getElementById("prompt").value.trim();
@@ -723,29 +337,132 @@
       const aspectRatio =
         document.getElementById("ratio").value;
 
+      const status =
+        document.getElementById("status");
+
 
       if (!prompt) {
 
-        status.innerText =
-          "⚠️ Please describe the video you want to create.";
+        status.style.display = "block";
+        status.textContent =
+          "Please describe the video you want to create.";
 
         return;
       }
 
 
-      button.disabled = true;
-
-      button.innerText =
-        "⏳ Sending request...";
-
-      status.innerText =
-        "Connecting to VidzAI...";
+      status.style.display = "block";
+      status.textContent =
+        "Sending your video request...";
 
 
       try {
 
-        const response =
-          await fetch(API_URL, {
+        const response = await fetch(API_URL, {
+
+          method: "POST",
+
+          headers: {
+            "Content-Type": "application/json"
+          },
+
+          body: JSON.stringify({
+
+            prompt: prompt,
+            style: style,
+            duration: duration,
+            aspectRatio: aspectRatio
+
+          })
+
+        });
+
+
+        const data = await response.json();
+
+
+        if (!response.ok) {
+
+          throw new Error(
+            data.error || "Video request failed."
+          );
+
+        }
+
+
+        status.textContent =
+          "Your video request was received successfully!";
+
+
+        console.log(data);
+
+
+      } catch (error) {
+
+        console.error(error);
+
+        status.textContent =
+          "Could not connect to the video server.";
+
+      }
+
+    }
+
+
+    // PAYMENT BUTTONS
+
+    document
+      .querySelectorAll("[data-plan]")
+      .forEach(function(button) {
+
+        button.addEventListener("click", function() {
+
+          const plan =
+            button.getAttribute("data-plan");
+
+          selectPlan(plan);
+
+        });
+
+      });
+
+
+    async function selectPlan(plan) {
+
+      if (plan === "free") {
+
+        alert(
+          "Your free VidzAI plan is available to get started."
+        );
+
+        return;
+
+      }
+
+
+      if (plan !== "pro" && plan !== "creator") {
+
+        return;
+
+      }
+
+
+      const email =
+        prompt("Enter your email address:");
+
+
+      if (!email) {
+
+        return;
+
+      }
+
+
+      try {
+
+        const response = await fetch(
+          PAYMENT_URL,
+          {
 
             method: "POST",
 
@@ -755,103 +472,43 @@
 
             body: JSON.stringify({
 
-              prompt: prompt,
-
-              style: style,
-
-              duration: duration,
-
-              aspectRatio: aspectRatio
+              email: email,
+              plan: plan
 
             })
 
-          });
+          }
+        );
 
 
         const data =
           await response.json();
 
 
-        if (!response.ok) {
+        if (!response.ok || !data.success) {
 
-          status.innerText =
-            "❌ Generation failed.\n\n" +
-            (data.error || "Server error.");
+          alert(
+            data.error ||
+            "Payment could not be started."
+          );
 
           return;
-        }
-
-
-        if (data.success) {
-
-          status.innerText =
-            "✅ Request received!\n\n" +
-            "Your AI video is being created.";
-
-        } else {
-
-          status.innerText =
-            "❌ " +
-            (data.error || "Generation failed.");
 
         }
+
+
+        window.location.href =
+          data.authorization_url;
 
 
       } catch (error) {
 
         console.error(error);
 
-        status.innerText =
-          "❌ Could not connect to the VidzAI server.\n\n" +
-          "Please try again.";
+        alert(
+          "Could not connect to the payment system."
+        );
 
-      } finally {
-
-        button.disabled = false;
-
-        button.innerText =
-          "🎬 Generate Video";
-
-      }
-
-    }
-
-
-    /*
-      PAYMENT PLACEHOLDER
-
-      We will connect this to Paystack through the backend.
-      Never put your Paystack secret key inside this file.
-    */
-
-    async function selectPlan(plan) {
-  const email = prompt("Enter your email address:");
-
-  if (!email) {
-    return;
-  }
-
-  try {
-    const response = await fetch(
-      "https://vidzai-api.onrender.com/api/payment/initialize",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          email: email,
-          plan: plan
-        })
-      }
-    );
-
-    const data = await response.json();
-
-    if (!response.ok || !data.success) {
-      alert(data.error || "Payment could not be started.");
-      return;
-  
       }
 
     }
