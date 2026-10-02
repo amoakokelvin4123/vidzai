@@ -117,7 +117,63 @@ app.post("/api/payment/initialize", async (req, res) => {
     });
   }
 });
+// Verify a Paystack transaction
+app.get("/api/payment/verify/:reference", async (req, res) => {
+  try {
+    const reference = req.params.reference;
 
+    if (!PAYSTACK_SECRET_KEY) {
+      return res.status(500).json({
+        error: "Paystack is not configured."
+      });
+    }
+
+    const response = await fetch(
+      `https://api.paystack.co/transaction/verify/${encodeURIComponent(reference)}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${PAYSTACK_SECRET_KEY}`
+        }
+      }
+    );
+
+    const result = await response.json();
+
+    if (!response.ok || !result.status) {
+      return res.status(400).json({
+        success: false,
+        error: result.message || "Could not verify payment."
+      });
+    }
+
+    const transaction = result.data;
+
+    if (transaction.status !== "success") {
+      return res.status(400).json({
+        success: false,
+        error: "Payment has not succeeded."
+      });
+    }
+
+    return res.json({
+      success: true,
+      message: "Payment verified.",
+      reference: transaction.reference,
+      amount: transaction.amount,
+      currency: transaction.currency,
+      email: transaction.customer.email,
+      plan: transaction.metadata?.plan || null
+    });
+  } catch (error) {
+    console.error("Payment verification error:", error);
+
+    return res.status(500).json({
+      success: false,
+      error: "Payment verification failed."
+    });
+  }
+});
 app.listen(PORT, () => {
   console.log(`VidzAI backend running on port ${PORT}`);
 });
